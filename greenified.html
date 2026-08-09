@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greenified — Cut the spin, keep the substance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;}
+  a{text-decoration:none;}
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    height:100vh;
+    width:100%;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    background:linear-gradient(160deg,#1b2b22,#0f1a14 60%,#2c221c);
+  }
+  .hero video{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    z-index:0;
+  }
+  .hero-overlay{ position:absolute; inset:0; background:rgba(0,0,0,0.15); z-index:1; }
+
+  .liquid-glass{
+    background: rgba(255,255,255,0.03);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.12);
+  }
+
+  /* Nav */
+  .nav{
+    position:relative; z-index:10;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 20px;
+  }
+  @media(min-width:640px){ .nav{padding:20px 24px;} }
+  @media(min-width:768px){ .nav{padding:20px 48px;} }
+  @media(min-width:1024px){ .nav{padding:20px 64px;} }
+  .logo{ display:flex; align-items:center; gap:8px; color:#fff; font-size:20px; font-weight:500; letter-spacing:-0.01em; }
+  .desktop-nav{ display:none; align-items:center; gap:32px; }
+  .desktop-cta{ display:none; align-items:center; gap:16px; }
+  @media(min-width:768px){ .desktop-nav{display:flex;} .desktop-cta{display:flex;} .mobile-btn{display:none;} }
+
+  .navlink{ color:rgba(255,255,255,0.9); font-size:14px; font-weight:500; background:none; border:none; cursor:pointer; display:flex; align-items:center; gap:4px; }
+  .navlink:hover{ color:#fff; }
+  .chev{ width:12px; height:12px; transition:transform 0.2s; }
+  .navdrop{ position:relative; }
+  .dropdown{
+    position:absolute; top:100%; left:0; margin-top:8px;
+    min-width:200px; border-radius:12px; padding:10px 8px;
+    display:none; flex-direction:column;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+    z-index:20;
+  }
+  .navdrop:hover .dropdown{ display:flex; }
+  .navdrop:hover .chev{ transform:rotate(180deg); }
+  .dropdown a{ color:rgba(255,255,255,0.8); font-size:14px; padding:8px 12px; border-radius:8px; }
+  .dropdown a:hover{ color:#fff; background:rgba(255,255,255,0.06); }
+
+  .btn-white{ padding:11px 22px; background:#fff; color:#111; font-size:14px; font-weight:600; border-radius:999px; }
+  .btn-white:hover{ background:rgba(255,255,255,0.9); }
+  .btn-glass{ padding:11px 22px; color:#fff; font-size:14px; font-weight:600; border-radius:999px; }
+  .btn-glass:hover{ background:rgba(255,255,255,0.1); }
+  .cta-link{ color:rgba(255,255,255,0.9); font-size:14px; font-weight:500; }
+  .cta-link:hover{ color:#fff; }
+  .cta-pill{ padding:9px 20px; color:#fff; font-size:14px; font-weight:500; border-radius:999px; }
+
+  .mobile-btn{ background:none; border:none; color:#fff; cursor:pointer; padding:4px; }
+  .mobile-menu{
+    position:relative; z-index:10; margin:0 20px;
+    max-height:0; overflow:hidden;
+    transition:max-height 0.4s cubic-bezier(0.16,1,0.3,1);
+  }
+  .mobile-menu-inner{ background:rgba(44,34,28,0.95); backdrop-filter:blur(20px); border-radius:16px; padding:20px; }
+  .mobile-menu-inner h4{ color:#fff; font-size:14px; font-weight:500; margin:0 0 8px; }
+  .mobile-menu-inner a{ display:block; color:rgba(255,255,255,0.7); font-size:14px; padding:6px 0 6px 12px; }
+  .mobile-footer{ border-top:1px solid rgba(255,255,255,0.1); margin-top:16px; padding-top:16px; display:flex; align-items:center; justify-content:space-between; }
+
+  /* Hero content */
+  .hero-content{ position:relative; z-index:10; flex:1; display:flex; align-items:flex-start; justify-content:center; padding:64px 20px 0; }
+  .hero-inner{ text-align:center; max-width:720px; }
+  .hero-inner h1{ color:#fff; font-size:36px; line-height:1.08; letter-spacing:-0.02em; margin:0; }
+  .muted{ color:rgba(255,255,255,0.6); }
+  .shimmer{
+    display:inline-block;
+    background-image: linear-gradient(105deg,
+      #B6D3EF 0%, #CAD1D7 12%, #D7CFC8 22%, #E1CDB9 32%,
+      #EAC6A5 42%, #EDB185 52%, #EF9B62 62%, #F18F60 72%,
+      #F48D7A 82%, #F78A94 92%, #F888A0 100%);
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmerSweep 3.2s ease-in-out infinite;
+  }
+  @keyframes shimmerSweep{
+    0%{ background-position: 100% 0; }
+    50%{ background-position: 0% 0; }
+    100%{ background-position: 100% 0; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .shimmer{ animation: none; background-position: 0% 0; }
+  }
+  .shimmer-heading{
+    display:inline-block;
+    background-image: linear-gradient(105deg,
+      var(--ink) 0%, var(--ink) 32%,
+      var(--flag-red) 44%, var(--unclear-amber) 50%, var(--verify-green) 56%,
+      var(--ink) 68%, var(--ink) 100%);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmerSweep 3.6s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .shimmer-heading{ animation: none; background-position: 0% 0; }
+  }
+  @media(min-width:640px){ .hero-inner h1{font-size:44px;} }
+  @media(min-width:768px){ .hero-inner h1{font-size:56px;} .hero-content{padding-top:96px;} }
+  @media(min-width:1024px){ .hero-inner h1{font-size:68px;} }
+  .hero-inner p{ color:rgba(255,255,255,0.8); font-size:15px; line-height:1.6; max-width:420px; margin:24px auto 0; }
+  @media(min-width:768px){ .hero-inner p{font-size:17px;} }
+  .hero-ctas{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; margin-top:28px; }
+
+  /* ===== Evidence / report theme ===== */
+  :root{
+    --paper:#EDE8DA; --paper-raised:#F5F1E6; --ink:#201D18; --ink-soft:#4A453C;
+    --rule:#C9C2AE; --flag-red:#B23A2E; --flag-red-bg:rgba(178,58,46,0.10);
+    --verify-green:#3D6B4F; --verify-green-bg:rgba(61,107,79,0.10);
+    --unclear-amber:#A67C2E; --unclear-amber-bg:rgba(166,124,46,0.10);
+    --mono-muted:#6B6455;
+  }
+  .evidence{ background:var(--paper); color:var(--ink); font-family:'Inter', -apple-system, sans-serif; padding:80px 20px; }
+  .evidence-inner{ max-width:720px; margin:0 auto; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--mono-muted); display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .eyebrow::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--flag-red); display:inline-block; }
+  .evidence h2{ font-family:'JetBrains Mono', monospace; letter-spacing:-0.01em; font-size:26px; margin:0 0 16px; }
+  .evidence p.lead{ font-size:17px; line-height:1.6; color:var(--ink-soft); margin:0 0 40px; }
+  .steps{ display:grid; gap:20px; }
+  @media(min-width:640px){ .steps{grid-template-columns:repeat(3,1fr);} }
+  .panel{ background:var(--paper-raised); border:1px solid var(--rule); border-radius:2px; position:relative; padding:20px; }
+  .panel::before{ content:attr(data-tab); position:absolute; top:-11px; left:20px; background:var(--ink); color:var(--paper); font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:3px 10px; }
+  .panel p{ font-size:14px; color:var(--ink-soft); margin:6px 0 0; }
+
+  .case-card{ display:flex; gap:18px; align-items:flex-start; padding:20px 0; border-bottom:1px solid var(--rule); }
+  .case-card:last-of-type{ border-bottom:none; }
+  .case-icon{ flex-shrink:0; width:44px; height:44px; border-radius:50%; background:var(--paper); border:1px solid var(--rule); display:flex; align-items:center; justify-content:center; }
+  .case-tag{ font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--mono-muted); margin-bottom:4px; }
+  .case-card h3{ font-size:18px; margin:0 0 6px; font-family:'Newsreader', serif; }
+  .case-card p{ font-size:14px; color:var(--ink-soft); line-height:1.55; margin:0; }
+  .mission-box{ margin-top:32px; padding:22px; background:var(--paper); border:1px solid var(--rule); border-radius:2px; }
+  .small-biz-box{ margin-top:12px; padding:22px; background:var(--paper); border-left:3px solid var(--unclear-amber); border-radius:2px; }
+
+  .voices-section{ overflow:hidden; }
+  .marquee-wrap{ overflow:hidden; margin-top:36px; -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .marquee-track{ display:flex; gap:18px; width:max-content; animation:marqueeScroll 46s linear infinite; }
+  .marquee-wrap:hover .marquee-track{ animation-play-state:paused; }
+  @media (prefers-reduced-motion: reduce){ .marquee-track{ animation:none; } }
+  @keyframes marqueeScroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  .voice-card{ flex:0 0 auto; width:300px; background:var(--paper-raised); border:1px solid var(--rule); border-radius:2px; padding:20px; display:flex; flex-direction:column; gap:12px; }
+  .voice-quote-mark{ font-family:'Newsreader', serif; font-size:34px; line-height:0.6; color:var(--rule); }
+  .voice-quote{ font-size:15px; line-height:1.55; margin:0; font-family:'Newsreader', Georgia, serif; font-style:italic; color:var(--ink); min-height:66px; }
+  .voice-person{ display:flex; align-items:center; gap:10px; margin-top:auto; padding-top:10px; border-top:1px solid var(--rule); }
+  .voice-avatar{ width:34px; height:34px; border-radius:50%; background:var(--ink); color:var(--paper); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:700; flex-shrink:0; }
+  .voice-name{ font-size:13px; font-weight:600; margin:0; }
+  .voice-role{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--mono-muted); margin:0; text-transform:uppercase; letter-spacing:0.04em; }
+  label.field-label{ display:block; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px; }
+  textarea{ width:100%; min-height:110px; padding:14px; border:1px solid var(--rule); background:var(--paper); color:var(--ink); border-radius:2px; font-family:'Inter', sans-serif; font-size:15px; resize:vertical; }
+  textarea:focus{ outline:2px solid var(--ink); outline-offset:1px; }
+  .file-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:20px; }
+  .thumb{ width:60px; height:60px; object-fit:cover; border:1px solid var(--rule); border-radius:2px; display:none; }
+  .clear-btn{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--flag-red); background:none; border:none; text-decoration:underline; cursor:pointer; display:none; }
+  .actions{ margin-top:24px; display:flex; align-items:center; gap:16px; }
+  .submit-btn{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; background:var(--ink); color:var(--paper); border:none; padding:14px 26px; border-radius:2px; cursor:pointer; }
+  .submit-btn:hover{ opacity:0.85; }
+  .submit-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+  .hint{ font-size:13px; color:var(--mono-muted); font-family:'JetBrains Mono', monospace; }
+
+  .report{ border:1px solid var(--ink); border-radius:2px; background:var(--paper-raised); margin-top:28px; }
+  .report-head{ padding:18px 22px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  .report-head h3{ font-family:'JetBrains Mono', monospace; font-size:17px; margin:0; }
+  .verdict-badge{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; padding:5px 12px; border-radius:2px; white-space:nowrap; }
+  .verdict-high_risk{background:var(--flag-red-bg); color:var(--flag-red); border:1px solid var(--flag-red);}
+  .verdict-some_concerns{background:var(--unclear-amber-bg); color:var(--unclear-amber); border:1px solid var(--unclear-amber);}
+  .verdict-appears_credible{background:var(--verify-green-bg); color:var(--verify-green); border:1px solid var(--verify-green);}
+  .score-badge{ font-family:'JetBrains Mono', monospace; font-weight:700; font-size:15px; color:var(--ink); background:var(--paper); border:1px solid var(--ink); border-radius:2px; padding:4px 10px; }
+  .report-body{ padding:22px; }
+  .summary{ font-size:15px; color:var(--ink-soft); line-height:1.55; margin:0 0 22px; }
+  .claim{ border-left:3px solid var(--rule); padding:2px 0 2px 16px; margin-bottom:16px; }
+  .claim.vague{border-left-color:var(--flag-red);}
+  .claim.specific{border-left-color:var(--verify-green);}
+  .claim.unverifiable{border-left-color:var(--unclear-amber);}
+  .claim-tag{ display:inline-block; font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; padding:2px 8px; border-radius:2px; margin-bottom:6px; }
+  .claim.vague .claim-tag{background:var(--flag-red-bg); color:var(--flag-red);}
+  .claim.specific .claim-tag{background:var(--verify-green-bg); color:var(--verify-green);}
+  .claim.unverifiable .claim-tag{background:var(--unclear-amber-bg); color:var(--unclear-amber);}
+  .claim-text{ font-family:'Newsreader', Georgia, serif; font-size:16px; font-style:italic; margin:0 0 6px; }
+  .claim-reasoning{ font-family:'JetBrains Mono', monospace; font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin:0; }
+  .not-a-claim{ font-size:15px; color:var(--ink-soft); }
+  .loading{ font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--mono-muted); display:flex; align-items:center; gap:10px; }
+  .spinner{ width:12px; height:12px; border:2px solid var(--rule); border-top-color:var(--ink); border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .error-box{ border:1px solid var(--flag-red); background:var(--flag-red-bg); color:var(--flag-red); padding:14px 16px; border-radius:2px; font-family:'JetBrains Mono', monospace; font-size:13px; }
+
+  /* ===== Gradient glow footer ===== */
+  .rx-footer{
+    position:relative;
+    background:linear-gradient(180deg,#1b2b22,#100e0c 55%,#0c0a09);
+    color:#fff;
+    overflow:hidden;
+    --glow-height:38vh;
+    padding-bottom:var(--glow-height);
+  }
+  .rx-footer-inner{ position:relative; z-index:2; max-width:840px; margin:0 auto; padding:64px 24px 28px; }
+  .rx-top{ display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:32px; }
+  .rx-brand{ display:flex; align-items:center; gap:8px; font-size:18px; font-weight:500; letter-spacing:-0.01em; }
+  .rx-tagline{ margin:14px 0 0; max-width:320px; font-size:14px; line-height:1.6; color:rgba(255,255,255,0.6); }
+  .rx-links{ display:flex; gap:40px; flex-wrap:wrap; }
+  .rx-col h4{ margin:0 0 12px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:rgba(255,255,255,0.45); }
+  .rx-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; }
+  .rx-col a{ font-size:14px; color:rgba(255,255,255,0.85); }
+  .rx-col a:hover{ color:#fff; }
+  .rx-bottom{ margin-top:48px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.12); display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.04em; color:rgba(255,255,255,0.5); }
+  .rx-status{ display:flex; align-items:center; gap:7px; }
+  .rx-dot{ width:6px; height:6px; border-radius:50%; background:#3D6B4F; box-shadow:0 0 6px #3D6B4F; }
+  .rx-glow-band{ position:fixed; left:0; right:0; bottom:0; height:var(--glow-height); pointer-events:none; z-index:1; transform-origin:bottom; will-change:transform; }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <video autoplay muted loop playsinline
+    src="https://ik.imagekit.io/qcoushatnu/4975156-hd_1080_1920_30fps.mp4"
+    onerror="this.style.display='none'">
+  </video>
+  <div class="hero-overlay"></div>
+
+  <div class="nav">
+    <div class="logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7" opacity="0.9"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65" opacity="0.9"></line>
+        <path d="M11 8v3l2 2" opacity="0.6"></path>
+      </svg>
+      greenified
+    </div>
+
+    <div class="desktop-cta">
+      <a href="#about" class="cta-link">About the project</a>
+      <a href="#tool" class="cta-pill liquid-glass">Analyze a claim</a>
+    </div>
+
+    <button class="mobile-btn" id="mobileBtn" aria-label="Menu">
+      <svg id="iconMenu" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+      <svg id="iconClose" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" style="display:none;"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>
+    </button>
+  </div>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-inner">
+      <div class="mobile-footer" style="border-top:none; margin-top:0; padding-top:0;">
+        <a href="#about" class="cta-link">About the project</a>
+        <a href="#tool" class="cta-pill liquid-glass">Analyze a claim</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-inner">
+      <h1><span class="shimmer">Cut the spin.</span> <span class="muted">Keep the</span> <span class="muted">substance.</span></h1>
+      <p>Greenified reads sustainability claims — pasted text or a photo of a label — and shows exactly which parts are backed by specifics, and which are just green-sounding words.</p>
+      <div class="hero-ctas">
+        <a href="#tool" class="btn-white">Analyze a claim</a>
+        <a href="#how" class="btn-glass liquid-glass">See how it works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="about" class="evidence">
+  <div class="evidence-inner">
+    <div class="eyebrow">Field Notes</div>
+    <h2><span class="shimmer-heading">What is greenwashing?</span></h2>
+    <p class="lead">Greenwashing is when marketing makes a product or company sound more sustainable than the substance behind it actually supports — think "eco-friendly" with no explanation, or "carbon neutral by 2030" with no real plan. It matters for SDG 12 (Responsible Consumption) and SDG 13 (Climate Action) because it lets companies claim credit for sustainability without doing the harder work.</p>
+
+    <div id="how" class="eyebrow">How It Works</div>
+    <div class="steps">
+      <div class="panel" data-tab="01"><p>Paste an ad claim or upload a photo of a label, product, or ad.</p></div>
+      <div class="panel" data-tab="02"><p>The AI checks what it's actually looking at, then reads each sustainability claim.</p></div>
+      <div class="panel" data-tab="03"><p>Every claim is marked specific, vague, or unverifiable — with plain-language reasoning, not just a score.</p></div>
+    </div>
+    <p class="mono" style="margin-top:32px; font-size:11px; color:var(--mono-muted);">Built for OurPlanet.Rocks — a student hackathon tackling the UN Sustainable Development Goals.</p>
+  </div>
+</section>
+
+<!-- ============ HOW THE AI WORKS ============ -->
+<section id="engine" class="evidence" style="border-top:1px solid var(--rule);">
+  <div class="evidence-inner">
+    <div class="eyebrow">Under The Hood</div>
+    <h2><span class="shimmer-heading">How the analysis engine works</span></h2>
+    <p class="lead">Greenified runs a three-stage reasoning pipeline, not a single black-box prompt — every step is designed to be auditable rather than a trust-me output.</p>
+
+    <div class="panel" data-tab="Stage 01" style="margin-bottom:20px;">
+      <h3 style="margin:6px 0 8px; font-size:17px;">Input triage</h3>
+      <p style="font-size:14px; line-height:1.6;">Before any analysis runs, the model first checks what it's actually looking at — a real product or ad with identifiable claims, an unrelated image, something too ambiguous to read, or a vague mention with nothing concrete to evaluate. Most AI tools skip this and hallucinate confidence where none is warranted. If the input names a well-known brand without pasting the exact claim, the model draws on general knowledge of that brand's documented practices instead of stalling — and says clearly when it's doing so.</p>
+    </div>
+
+    <div class="panel" data-tab="Stage 02" style="margin-bottom:20px;">
+      <h3 style="margin:6px 0 8px; font-size:17px;">Claim-level evidence tagging</h3>
+      <p style="font-size:14px; line-height:1.6;">Rather than one opaque score for a whole product, each individual claim is tagged on its own: <strong>specific</strong> (backed by a named certification, a concrete number, or a verifiable mechanism), <strong>vague</strong> (feel-good language like "eco-friendly" with nothing behind it), or <strong>unverifiable</strong> (plausible, but not assessable from what's given). Every tag comes with a one-sentence, plain-language reason.</p>
+    </div>
+
+    <div class="panel" data-tab="Stage 03" style="margin-bottom:20px;">
+      <h3 style="margin:6px 0 8px; font-size:17px;">Calibrated credibility scoring</h3>
+      <p style="font-size:14px; line-height:1.6;">The 60–100% score is anchored to fixed reference bands, not a gut feeling — 95–100% requires near-total specificity with no contradicting history, while 60–64% requires near-total vagueness or documented contradicting evidence like a past scandal or regulatory action. The model counts the actual ratio of specific-to-vague claims, matches it to the right band, then adjusts for known contradicting evidence — turning a subjective judgment into a structured, comparable one.</p>
+    </div>
+
+    <div class="mission-box">
+      <div class="eyebrow" style="margin-bottom:8px;">Multimodal, and honest about its limits</div>
+      <p style="margin:0 0 12px; font-size:15px; color:var(--ink-soft); line-height:1.6;">The same pipeline runs on pasted text or a photo of a physical label — vision and language analysis feed into the same evidence-tagging logic, so a shampoo bottle photo gets the same rigor as a typed-in ad claim.</p>
+      <p style="margin:0; font-size:15px; color:var(--ink-soft); line-height:1.6;">Greenified isn't a live fact-checking database — it can't verify a certification is currently valid the way a regulator could. It's built to do what a careful, literate reader would do on a first pass: separate substantiated claims from marketing language, and say plainly when it doesn't know enough to judge.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NOTABLE CASES ============ -->
+<section id="cases" class="evidence" style="border-top:1px solid var(--rule); background:var(--paper-raised);">
+  <div class="evidence-inner">
+    <div class="eyebrow">Case File</div>
+    <h2><span class="shimmer-heading">This has happened before</span></h2>
+    <p class="lead">Greenwashing isn't hypothetical — regulators and journalists have caught major companies doing exactly this, and it happens at every scale. The most famous cases involve billion-dollar brands, but the same vague-label tricks show up on a $12 bottle of "natural" shampoo at a corner store just as often as on a Fortune 500 sustainability report. A few well-documented big-name examples first:</p>
+
+    <div class="case-card">
+      <div class="case-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--flag-red)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 17h1l1.5-4.5A2 2 0 0 1 7.4 11h9.2a2 2 0 0 1 1.9 1.5L20 17h1"/>
+          <circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/>
+          <path d="M5 13l1-4h12l1 4" opacity="0.5"/>
+        </svg>
+      </div>
+      <div>
+        <div class="case-tag">2015 · $31B+ in fines and settlements</div>
+        <h3>Volkswagen's "Clean Diesel"</h3>
+        <p>For years, VW advertised its diesel engines as low-emission. In September 2015, U.S. regulators found the real mechanism: software that detected when a car was being emissions-tested and temporarily altered engine performance to pass — while emitting up to 40 times the legal nitrogen oxide limit on the road. Roughly 11 million vehicles worldwide were affected. This is the clearest case on this list: the claim wasn't just exaggerated, it was engineered to deceive a specific test.</p>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--unclear-amber)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3v6a4 4 0 0 0 8 0V3" opacity="0.7"/>
+          <path d="M12 13v8"/><path d="M9 21h6"/>
+        </svg>
+      </div>
+      <div>
+        <div class="case-tag">2018 · Reversed after public testing</div>
+        <h3>McDonald's paper straws</h3>
+        <p>In 2018, McDonald's UK swapped plastic straws for paper ones, framing it as a plastic-reduction win. The problem surfaced a year later: the paper was too thick for UK recycling machinery to process, meaning the "eco" straws were going to landfill just like the plastic ones — while the swap did nothing about McDonald's much larger sources of packaging waste. It's a textbook "hidden trade-off": a visible fix for a small piece of the problem, standing in for the harder work on the rest of it.</p>
+      </div>
+    </div>
+
+    <div class="case-card">
+      <div class="case-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--verify-green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 3h10l1 5a6 6 0 0 1-12 0z"/>
+          <path d="M12 14v7"/><path d="M8 21h8"/>
+        </svg>
+      </div>
+      <div>
+        <div class="case-tag">2014–2017 · Discontinued after weak sales</div>
+        <h3>Coca-Cola Life</h3>
+        <p>Coca-Cola Life launched with green-labeled bottles and ad imagery built entirely around nature and health, positioning it as the natural, better-for-you Coke. But the "green" was mostly the label: it still carried meaningful added sugar, and nutritionists said the branding overstated how different it really was from regular Coke. Consumer confusion over what the product actually was — a diet drink? a healthier original? — contributed to Coca-Cola pulling it from shelves in 2017, three years after launch.</p>
+      </div>
+    </div>
+
+    <div class="small-biz-box">
+      <div class="case-tag" style="margin-bottom:8px;">It's not just the giants</div>
+      <p style="margin:0; font-size:15px; color:var(--ink-soft); line-height:1.6;">Small brands do it too — usually more crudely, and with far less accountability, since they rarely face a regulator or a journalist checking their claims. A shampoo bottle that says "natural" with no ingredient breakdown. A candle brand calling itself "eco-conscious" with no certification, no sourcing info, nothing but the word itself. A local coffee bag stamped "sustainably sourced" with no indication of what standard that's measured against. These claims get less scrutiny than Volkswagen or Coca-Cola precisely because nobody's watching closely enough to catch them — which is exactly the gap this tool is meant to help close.</p>
+    </div>
+
+    <div class="mission-box">
+      <div class="eyebrow" style="margin-bottom:8px;">Why Greenified Exists</div>
+      <p style="margin:0 0 14px; font-size:15px; color:var(--ink-soft); line-height:1.6;">Most people don't have time to research every brand's claims the way investigative journalists or regulators do. Greenified gives anyone the same first pass — read a claim, and see whether it's backed by something real or just sounds good. The goal isn't to accuse companies; it's to make vague, unverifiable language easier to spot before it does its job.</p>
+      <p style="margin:0; font-size:15px; color:var(--ink-soft); line-height:1.6;">So I built this app to raise people's awareness of greenwashing — and made it so anyone can check whether a company or product actually has real evidence behind its claims, instead of just taking the label's word for it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VOICES ON RECORD ============ -->
+<section id="voices" class="evidence voices-section" style="border-top:1px solid var(--rule); padding-bottom:60px;">
+  <div class="evidence-inner">
+    <div class="eyebrow">On Record</div>
+    <h2><span class="shimmer-heading">People are calling this out</span></h2>
+    <p class="lead">This isn't just a hackathon talking point — regulators, UN officials, and climate advocates have been saying it publicly for years. A few statements on the record:</p>
+  </div>
+
+  <div class="marquee-wrap">
+    <div class="marquee-track" id="voicesTrack"></div>
+  </div>
+</section>
+
+<script id="voicesData" type="application/json">
+[
+  {
+    "name": "António Guterres",
+    "role": "UN Secretary-General",
+    "quote": "We must have zero tolerance for net-zero greenwashing.",
+    "context": "Remarks at COP27 on the Net-Zero Expert Group report cracking down on empty corporate climate pledges."
+  },
+  {
+    "name": "Lina Khan",
+    "role": "Former FTC Chair",
+    "quote": "It distorts the market for environmentally friendly products.",
+    "context": "On why false eco-claims hurt honest companies and consumers trying to buy responsibly."
+  },
+  {
+    "name": "Greta Thunberg",
+    "role": "Climate Activist",
+    "quote": "No more greenwashing.",
+    "context": "Walked out of a COP26 panel on carbon offsets, calling the practice a way to let polluters keep polluting."
+  },
+  {
+    "name": "Teresa Anderson",
+    "role": "Climate Policy Coordinator, ActionAid",
+    "quote": "Carbon offsets mean climate sabotage.",
+    "context": "Argued offset schemes let companies claim credit for climate action while driving harm elsewhere, including land grabs."
+  }
+]
+</script>
+<section id="tool" class="evidence tool-section">
+  <div class="evidence-inner">
+    <div class="eyebrow">Evidence Intake</div>
+    <h2><span class="shimmer-heading">Run an analysis</span></h2>
+    <p class="mono" style="font-size:12px; color:var(--mono-muted); margin-bottom:28px;">Analysis is language-based, not a database fact-check — it flags vague vs. specific claims and explains its reasoning. It does not verify certifications independently.</p>
+
+    <div class="panel" data-tab="Claim Input" style="padding:26px;">
+      <label class="field-label">Ad copy or sustainability claim</label>
+      <textarea id="claimText" placeholder='e.g. "Our new collection is made with eco-friendly materials and helps protect the planet."'></textarea>
+
+      <label class="field-label" style="margin-top:20px;">Or upload a photo (product label, ad, packaging)</label>
+      <div class="file-row">
+        <input type="file" id="photoInput" accept="image/*">
+        <img id="thumb" class="thumb">
+        <button class="clear-btn" id="clearPhoto">remove</button>
+      </div>
+
+      <div class="actions">
+        <button class="submit-btn" id="analyzeBtn">Run analysis</button>
+        <span class="hint" id="hintText"></span>
+      </div>
+    </div>
+
+    <div id="results"></div>
+  </div>
+</section>
+
+<footer class="rx-footer" id="rxFooter">
+  <div class="rx-footer-inner">
+    <div class="rx-top">
+      <div>
+        <div class="rx-brand">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7" opacity="0.9"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65" opacity="0.9"></line>
+            <path d="M11 8v3l2 2" opacity="0.6"></path>
+          </svg>
+          greenified
+        </div>
+        <p class="rx-tagline">Reads sustainability claims and shows what's backed by specifics versus what's just green-sounding words.</p>
+      </div>
+      <div class="rx-links">
+        <div class="rx-col">
+          <h4>Site</h4>
+          <ul>
+            <li><a href="#about">About the project</a></li>
+            <li><a href="#engine">How it works</a></li>
+            <li><a href="#cases">Case file</a></li>
+            <li><a href="#tool">Analyze a claim</a></li>
+          </ul>
+        </div>
+        <div class="rx-col">
+          <h4>Built for</h4>
+          <ul>
+            <li><a href="https://ourplanet.rocks" target="_blank" rel="noopener">OurPlanet.Rocks</a></li>
+            <li><span style="color:rgba(255,255,255,0.5);">SDG 12 · SDG 13</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="rx-bottom">
+      <span>© 2026 Greenified</span>
+      <span class="rx-status"><span class="rx-dot"></span>Evidence engine online</span>
+      <span>Built solo for a hackathon</span>
+    </div>
+  </div>
+  <div class="rx-glow-band" id="rxGlowBand">
+    <svg id="rxGlowSvg" style="height:100%; width:100%; display:block;" viewBox="0 0 1271 599" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="rxGrad" x1="0" y1="1" x2="0" y2="0">
+          <stop offset="0" stop-color="#340B05"></stop>
+          <stop offset="0.1827" stop-color="#0358F7"></stop>
+          <stop offset="0.2837" stop-color="#5092C7"></stop>
+          <stop offset="0.4135" stop-color="#E1ECFE"></stop>
+          <stop offset="0.5866" stop-color="#FFD400"></stop>
+          <stop offset="0.6827" stop-color="#FA3D1D"></stop>
+          <stop offset="0.8029" stop-color="#FD02F5"></stop>
+          <stop offset="1" stop-color="#FFC0FD00"></stop>
+        </linearGradient>
+        <filter id="rxBlur" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="15"></feGaussianBlur>
+        </filter>
+      </defs>
+      <g id="rxBars"></g>
+    </svg>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu toggle
+  const mobileBtn = document.getElementById('mobileBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const iconMenu = document.getElementById('iconMenu');
+  const iconClose = document.getElementById('iconClose');
+  let menuOpen = false;
+  mobileBtn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.style.maxHeight = menuOpen ? mobileMenu.scrollHeight + 'px' : '0px';
+    iconMenu.style.display = menuOpen ? 'none' : 'block';
+    iconClose.style.display = menuOpen ? 'block' : 'none';
+  });
+
+  // Smooth scroll for in-page links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({behavior:'smooth'});
+        if(menuOpen){ mobileBtn.click(); }
+      }
+    });
+  });
+
+  // ---- Analyzer ----
+  const claimText = document.getElementById('claimText');
+  const photoInput = document.getElementById('photoInput');
+  const thumb = document.getElementById('thumb');
+  const clearPhotoBtn = document.getElementById('clearPhoto');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const hintText = document.getElementById('hintText');
+  const resultsEl = document.getElementById('results');
+
+  let imageBase64 = null;
+  let imageMediaType = null;
+
+  photoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+    imageMediaType = file.type;
+    const reader = new FileReader();
+    reader.onload = () => {
+      imageBase64 = reader.result.split(',')[1];
+      thumb.src = reader.result;
+      thumb.style.display = 'inline-block';
+      clearPhotoBtn.style.display = 'inline-block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  clearPhotoBtn.addEventListener('click', () => {
+    imageBase64 = null; imageMediaType = null;
+    photoInput.value = '';
+    thumb.style.display = 'none';
+    clearPhotoBtn.style.display = 'none';
+  });
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+  function verdictLabel(v){
+    if(v === 'high_risk') return 'High Risk';
+    if(v === 'some_concerns') return 'Some Concerns';
+    if(v === 'appears_credible') return 'Appears Credible';
+    return v;
+  }
+  function tagLabel(t){
+    if(t === 'vague') return 'Vague / Unsubstantiated';
+    if(t === 'specific') return 'Specific / Backed by Detail';
+    if(t === 'unverifiable') return "Can't Be Verified From Text Alone";
+    return t;
+  }
+
+  async function analyze(){
+    const text = claimText.value.trim();
+    if(!text && !imageBase64){
+      hintText.textContent = 'Add some text or a photo first.';
+      return;
+    }
+    analyzeBtn.disabled = true;
+    hintText.textContent = '';
+    resultsEl.innerHTML = '<div class="loading"><span class="spinner"></span> Reading the claim...</div>';
+
+    const systemPrompt = `You are a careful, evidence-based greenwashing analyst. You will be given ad copy / a sustainability claim as text, and/or a photo of a product, label, or ad.
+
+STEP 1 — If an image is provided, first determine what it actually shows:
+- "product_ad": a product, package, label, advertisement, or marketing material with visible text or branding
+- "unrelated_image": a photo that is NOT a product/ad/label (e.g. a random person, pet, landscape, unrelated object). Be direct and say plainly what you see instead.
+- "unclear": the image is too blurry, cropped, or ambiguous to identify any product or claims with confidence
+
+If input_type is "unrelated_image" or "unclear", do NOT invent a greenwashing analysis. Explain briefly and honestly what you actually see (or why you can't tell), set claims to an empty array, and set overall_verdict to null.
+
+STEP 1.5 — If there's no image and the person names a specific company/brand and asks whether their sustainability claims are legitimate (e.g. "are they really eco-friendly", "is X eco friendly") without pasting the literal ad copy or label text:
+- If you have reasonably confident general knowledge of this company's actual, well-documented sustainability claims, certifications, or practices (e.g. a known consumer brand), proceed to STEP 2 and evaluate using that general knowledge. Set "basis" to "general_knowledge" and make "note" explicitly say this is based on general knowledge rather than the exact wording the person saw, and suggest they check the brand's current label/site for anything that may have changed.
+- If you are NOT confident you know this company's actual claims well enough to say anything meaningful (obscure/local brand, or you're unsure your knowledge is accurate or current), THEN set input_type to "needs_clarification" and ask a specific follow-up question. Only do this when you genuinely lack reliable knowledge — do not default to it just because the literal ad copy wasn't pasted.
+- If you are highly confident, based on general knowledge, that this company has NOT actually made public eco-friendly/sustainability claims, say so plainly and directly instead of inventing claims to analyze. Only state this when you are genuinely sure — if you're unsure whether they've made claims, ask for clarification instead of guessing either way.
+
+If there's no image and the text is just a bare name/short phrase with no company identifiable and no claim to evaluate — e.g. "paper takeout boxes" with no brand — set input_type to "needs_clarification" and ask what specific claim or product they mean.
+
+STEP 2 — If there is a real product/ad (from text and/or image, or from confident general knowledge per STEP 1.5) with sustainability-related claims, analyze each distinct claim:
+- "vague": uses feel-good language ("eco-friendly", "green", "natural", "sustainable") with no specific mechanism, number, certification, or standard behind it
+- "specific": includes a concrete number, named certification (e.g. Fair Trade, FSC, B Corp), or verifiable mechanism
+- "unverifiable": makes a claim that could be true but can't be assessed from the text/image alone
+
+Be honest and calibrated — do not force every input into a dramatic verdict. If a claim is genuinely well-specified, say so. If there are no sustainability claims at all, say that plainly (claims: [], overall_verdict: null, credibility_score: null).
+
+STEP 3 — CREDIBILITY SCORE. Give a "credibility_score" integer from 60 to 100 (never below 60, never above 100). This score must be a reasoned, comparative judgment anchored to fixed reference points — not a random or arbitrary number. Use these anchors:
+- 95-100: Nearly all claims are specific — named certifications (B Corp, FSC, Fair Trade, etc.), concrete numbers, or clearly verifiable mechanisms. Little to no vague language. No known contradicting evidence.
+- 85-94: Most claims are specific and backed; at most one or two are broad/unverifiable but nothing is misleading or contradicted.
+- 75-84: A real mix — roughly half specific, half vague or unverifiable. Some genuine substantiation exists but there are real gaps.
+- 65-74: Mostly vague, feel-good language ("eco-friendly", "green", "natural") with little to no concrete backing; claims are plausible but essentially unverifiable as stated.
+- 60-64: Almost entirely vague/buzzword claims with zero substantiation, OR there is known contradicting evidence (e.g. a documented scandal, regulatory action, or reversal) that undercuts the claims being made.
+
+To score: count how many claims are specific vs. vague vs. unverifiable, weigh that ratio against the anchors above, and adjust down if you have reliable knowledge of contradicting evidence (past greenwashing findings, regulatory action, etc.). Think through this ratio explicitly before picking a number — the score should be the anchor band that best matches the actual evidence, not a gut feeling. Keep overall_verdict consistent with the score: 85-100 = "appears_credible", 70-84 = "some_concerns", 60-69 = "high_risk".
+
+Only use "I don't recognize this" type language when you genuinely cannot identify a product — not as a default hedge.
+
+Respond with ONLY raw JSON, no markdown fences, no preamble, matching exactly this shape:
+{
+  "input_type": "product_ad" | "unrelated_image" | "unclear" | "needs_clarification",
+  "basis": "provided_text" | "general_knowledge" | null,
+  "no_claims_found": true | false,
+  "note": "1-2 sentence honest description of what you see / why you can't proceed. If basis is general_knowledge, say so explicitly here. If no_claims_found is true, state plainly that you're not aware of this company making that claim, and that they should double check since your knowledge may be incomplete.",
+  "product_name": "string or null",
+  "overall_verdict": "high_risk" | "some_concerns" | "appears_credible" | null,
+  "credibility_score": 60-100 integer or null,
+  "summary": "2-3 sentence plain-language summary, or empty string if not applicable",
+  "claims": [
+    {"text": "the exact claim quoted or closely paraphrased", "tag": "vague" | "specific" | "unverifiable", "reasoning": "1 sentence, concrete, explaining exactly why"}
+  ]
+}`;
+
+    const OPENROUTER_API_KEY = "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";
+
+    const userContent = [];
+    if(imageBase64){
+      userContent.push({ type: "image_url", image_url: { url: `data:${imageMediaType};base64,${imageBase64}` } });
+    }
+    userContent.push({ type: "text", text: text ? `Ad copy / claim text provided: "${text}"` : "No text provided — analyze the image only." });
+
+    try{
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "google/gemma-4-31b-it:free",
+          max_tokens: 1000,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userContent }
+          ]
+        })
+      });
+      if(!response.ok) throw new Error(`API error: ${response.status}`);
+      const data = await response.json();
+      const textBlocks = data.choices?.[0]?.message?.content ?? "";
+      const cleaned = textBlocks.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(cleaned);
+      renderResults(parsed);
+    }catch(err){
+      console.error(err);
+      resultsEl.innerHTML = `<div class="error-box">Something went wrong analyzing this — ${escapeHtml(err.message)}. Try again.</div>`;
+    }finally{
+      analyzeBtn.disabled = false;
+    }
+  }
+
+  function renderResults(r){
+    if(r.input_type === 'needs_clarification'){
+      resultsEl.innerHTML = `
+        <div class="report">
+          <div class="report-body">
+            <p class="not-a-claim" style="margin-bottom:16px;">${escapeHtml(r.note || 'Can you say more about which claim you want checked?')}</p>
+            <label class="field-label">Add a bit more detail</label>
+            <textarea id="followupText" style="min-height:70px;" placeholder="e.g. their packaging claims, a specific ad you saw, a sourcing statement..."></textarea>
+            <div class="actions" style="margin-top:14px;">
+              <button class="submit-btn" id="followupBtn">Continue</button>
+            </div>
+          </div>
+        </div>`;
+      document.getElementById('followupBtn').addEventListener('click', () => {
+        const extra = document.getElementById('followupText').value.trim();
+        if(!extra){ return; }
+        claimText.value = (claimText.value.trim() + ' — ' + extra).trim();
+        analyze();
+      });
+      return;
+    }
+    if(r.no_claims_found){
+      resultsEl.innerHTML = `
+        <div class="report">
+          <div class="report-body">
+            <p class="not-a-claim">${escapeHtml(r.note || "I'm not aware of this company making that claim.")}</p>
+          </div>
+        </div>`;
+      return;
+    }
+    if(r.input_type !== 'product_ad' || (r.claims && r.claims.length === 0 && !r.overall_verdict)){
+      resultsEl.innerHTML = `<div class="report"><div class="report-body"><p class="not-a-claim">${escapeHtml(r.note || 'Nothing to evaluate here.')}</p></div></div>`;
+      return;
+    }
+    const claimsHtml = (r.claims || []).map(c => `
+      <div class="claim ${c.tag}">
+        <span class="claim-tag">${escapeHtml(tagLabel(c.tag))}</span>
+        <p class="claim-text">"${escapeHtml(c.text)}"</p>
+        <p class="claim-reasoning">${escapeHtml(c.reasoning)}</p>
+      </div>
+    `).join('');
+    const badgeClass = r.overall_verdict ? `verdict-${r.overall_verdict}` : '';
+    const basisNote = r.basis === 'general_knowledge'
+      ? `<p class="mono" style="font-size:11px; color:var(--mono-muted); margin:0 0 16px; padding:8px 10px; background:var(--paper); border:1px solid var(--rule); border-radius:2px;">Based on general knowledge of this brand, not text you pasted — worth double-checking their current label or site.</p>`
+      : '';
+    resultsEl.innerHTML = `
+      <div class="report">
+        <div class="report-head">
+          <h3>${escapeHtml(r.product_name || 'Analysis Report')}</h3>
+          <div style="display:flex; align-items:center; gap:10px;">
+            ${r.credibility_score ? `<span class="score-badge">${escapeHtml(String(r.credibility_score))}%</span>` : ''}
+            ${r.overall_verdict ? `<span class="verdict-badge ${badgeClass}">${escapeHtml(verdictLabel(r.overall_verdict))}</span>` : ''}
+          </div>
+        </div>
+        <div class="report-body">
+          ${basisNote}
+          ${r.summary ? `<p class="summary">${escapeHtml(r.summary)}</p>` : ''}
+          ${claimsHtml || `<p class="not-a-claim">${escapeHtml(r.note || 'No sustainability claims found to evaluate.')}</p>`}
+        </div>
+      </div>
+    `;
+  }
+
+  analyzeBtn.addEventListener('click', analyze);
+
+  // ---- Voices marquee ----
+  (function initVoices(){
+    const track = document.getElementById('voicesTrack');
+    const dataEl = document.getElementById('voicesData');
+    if(!track || !dataEl) return;
+    const voices = JSON.parse(dataEl.textContent);
+
+    function initials(name){
+      return name.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase();
+    }
+    function cardHtml(v){
+      return `
+        <div class="voice-card">
+          <div class="voice-quote-mark">"</div>
+          <p class="voice-quote">${escapeHtml(v.quote)}</p>
+          <p class="claim-reasoning" style="margin:0;">${escapeHtml(v.context)}</p>
+          <div class="voice-person">
+            <div class="voice-avatar">${escapeHtml(initials(v.name))}</div>
+            <div>
+              <p class="voice-name">${escapeHtml(v.name)}</p>
+              <p class="voice-role">${escapeHtml(v.role)}</p>
+            </div>
+          </div>
+        </div>`;
+    }
+    // Duplicate the set once so translateX(-50%) loops seamlessly.
+    const html = voices.map(cardHtml).join('') + voices.map(cardHtml).join('');
+    track.innerHTML = html;
+  })();
+
+  // ---- Gradient glow footer (vanilla port) ----
+  (function initGlowFooter(){
+    const VBW = 1271, VBH = 599;
+    const bars = 9, peak = 0.98, valley = 0.55, minReveal = 0;
+    const barsGroup = document.getElementById('rxBars');
+    const band = document.getElementById('rxGlowBand');
+    if(!barsGroup || !band) return;
+
+    function bellHeights(n, peak, valley){
+      const out = [];
+      const mid = (n - 1) / 2;
+      for(let i = 0; i < n; i++){
+        const t = mid === 0 ? 0 : Math.abs(i - mid) / mid;
+        const eased = 1 - Math.pow(t, 1.24);
+        out.push(peak * VBH * (valley + (1 - valley) * eased));
+      }
+      return out;
+    }
+
+    const colW = VBW / bars;
+    const heights = bellHeights(bars, peak, valley);
+    barsGroup.innerHTML = heights.map((barH, i) => `
+      <g filter="url(#rxBlur)">
+        <rect x="${i * colW}" y="${VBH - barH}" width="${colW * 1.23}" height="${barH}" fill="url(#rxGrad)"></rect>
+      </g>
+    `).join('');
+
+    const clamp01 = v => Math.max(0, Math.min(1, v));
+
+    function measure(){
+      const h = band.offsetHeight || 1;
+      const left = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+      const t = clamp01((h - left) / h);
+      const progress = minReveal + (1 - minReveal) * t;
+      band.style.transform = `scaleY(${progress})`;
+    }
+
+    measure();
+    window.addEventListener('scroll', measure, { passive: true });
+    window.addEventListener('resize', measure, { passive: true });
+  })();
+</script>
+</body>
+</html>
